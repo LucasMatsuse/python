@@ -25,8 +25,8 @@ __license__ = "Unlicense"
 
 import os
 
-current_language = os.getenv("LANG",input('please enter your language (e.g. en_US): '))[:5]
-msg = "Hello, World!"
+current_language = os.getenv("LANG","en_US")[:5]
+
 
 if current_language == "pt_BR":
     msg = "Olá, Mundo!"
