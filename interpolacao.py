@@ -1,18 +1,26 @@
-email_tmp = """
-Olá, %(nome)s.
-Tem interesse em comprar %(produto)s?
-Este produto é ótimo para %(texto)s
-Clique em %(link)s para comprar.
-Restão só %(quantidade)d unidades
-Preço promocional, apenas %(preco).2f reais.
-"""
+#!usr/bin/env python
 
-clientes = ["Maria","João","Lucas"]
+import os
+import sys
+arguments = sys.argv[1:]
+if not arguments:
+    print('É necesssário passsar os arquivos de emails e de template.')
+    sys.exit(1)
 
-for cliente in clientes:
+filename = arguments[0]
+templatename = arguments[1]
+
+path = os.curdir
+filepath = os.path.join(path,filename)
+templatepath = os.path.join(path,templatename)
+
+for line in open(filepath, encoding='utf-8'):
+    nome, email = line.split(',')
+    print(f'email enviado para {email}.')
+    print()
     print(
-        email_tmp %{
-            "nome":clientes,
+        open(templatepath).read()%{
+            "nome":nome,
             "produto":"caneta",
             "texto":"Escrever lindos textos",
             "link":"https://canetaslegais.com",
@@ -20,3 +28,4 @@ for cliente in clientes:
             "preco":10.0
         }
     )
+    print('*'*50)
