@@ -27,8 +27,29 @@ __version__ = "0.1.1"
 import sys
 import os
 from datetime import datetime
+import logging
+from logging import handlers
 
-
+#logconfig
+log_level = os.getenv("LOG_LEVEL","WARNING").upper()
+log = logging.Logger('prefixcalc',log_level)
+ch = logging.StreamHandler()
+ch.setLevel(log_level)
+fh = handlers.RotatingFileHandler(
+    'prefixcalcerror.log',
+    maxBytes =10**6,
+    backupCount = 10 
+)
+fh.setLevel(log_level)
+fmt = logging.Formatter(
+    '%(asctime)s %(name)s %(levelname)s '
+    'l:%(lineno)d f:%(filename)s: %(message)s'
+)
+ch.setFormatter(fmt)
+fh.setFormatter(fmt)
+log.addHandler(ch)
+log.addHandler(fh)
+#-----------------
 
 if len(sys.argv) == 4:
     func = sys.argv[1].strip('-').lower().strip()
@@ -51,13 +72,11 @@ try:
     print(resultado[func])
 
 except ZeroDivisionError as e:
-    print(str(e))
-    print('Não é possível fazer divisões por 0.')
+    log.error('Não é possível fazer divisão por 0. %s',str(e))
     sys.exit(1)
 
 except KeyError as e:
-    print(str(e))
-    print('A operação indicada não é válida.')
+    log.error('A operação indicada não é válida. %s',str(e))
     sys.exit(1)
 
 
@@ -70,5 +89,5 @@ try:
     with open(filepath,'a') as file_:
         file_.write(f'{timestamp} - {user} - {func}, {n1}, {n2} = {resultado[func]}.\n')
 except PermissionError as e:
-    print(str(e))
+    log.error('%s',str(e))
     sys.exit(1)
